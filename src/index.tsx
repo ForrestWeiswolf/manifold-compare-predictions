@@ -16,8 +16,10 @@ const formatProb = (prob: number) => `${Math.round(prob * 100)}%`;
 export function App() {
 	const [usernames, setUsernames] = useState(['', ''] as [string, string]);
 	const [commonMarkets, setCommonMarkets] = useState<Array<Market & { userProbs: number[] }>>([]);
+	const [loading, setLoading] = useState(false);
 
 	const fetchCommonMarkets = async () => {
+		setLoading(true);
 		const bets = await Promise.all([fetchBets({ username: usernames[0] }), fetchBets({ username: usernames[1] })]);
 		const userIds = [bets[0][0].userId, bets[1][0].userId];
 		const commonMarketIds = new Set<string>();
@@ -42,6 +44,7 @@ export function App() {
 				.map(m => ({ ...m, userProbs: userIds.map(id => getLastBetProb(commonBets, m, id)) }))
 				.sort((a, b) => (a.userProbs[0] - a.userProbs[1]) - (b.userProbs[0] - b.userProbs[1]))
 		);
+		setLoading(false);
 	};
 
 	return (
@@ -59,7 +62,7 @@ export function App() {
 				}}
 			/>
 			<button onClick={() => fetchCommonMarkets()}>Fetch</button>
-			<div>
+			{loading ? <div>Loading...</div> : <div>
 				{commonMarkets.map((market) => (
 					<div key={market.id}>
 						<a href={market.url}>{market.question}{market.probability ? `: ${formatProb(market.probability)}` : ''}</a>
@@ -71,6 +74,7 @@ export function App() {
 					</div>
 				))}
 			</div>
+			}
 		</div>
 	);
 }
