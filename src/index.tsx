@@ -6,7 +6,6 @@ import { Bet, Market } from './types';
 
 const getLastBetProb = (bets: Bet[], market: Market, userId: string) => {
 	const bet = bets.sort((a, b) => b.createdTime - a.createdTime).find((b) => b.contractId === market.id && b.userId === userId);
-	console.log({ bets, market, userId, bet });
 	if (!bet) { return null; }
 
 	return bet.probAfter;
