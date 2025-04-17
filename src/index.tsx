@@ -1,7 +1,14 @@
 import { render } from 'preact';
+import { useEffect } from 'preact/hooks';
 import './style.css';
+import { fetchMarkets } from './api';
 
 export function App() {
+	useEffect(() => {
+		fetchMarkets({ }).then((markets) => {
+			console.log(markets)
+		})
+	}, [])
 	return (
 		<div>
 			<h1>Hello World</h1>
