@@ -27,16 +27,16 @@ export function App() {
 			if (bets[1].some((b) => b.contractId === bet.contractId)) { commonMarketIds.add(bet.contractId); }
 		});
 
-		const commonBets = [
-			...bets[0].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId)),
-			...bets[1].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId))
-		];
-
 		const commonMarkets = Promise.all(
 			Array.from(commonMarketIds).map((id) =>
 				fetchMarket(id)
 			)
 		);
+
+		const commonBets = [
+			...bets[0].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId)),
+			...bets[1].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId))
+		];
 
 		setCommonMarkets(
 			(await commonMarkets)
