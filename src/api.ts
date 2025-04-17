@@ -1,3 +1,5 @@
+import { Market, User } from './types'
+
 const API_URL = 'https://api.manifold.markets/v0'
 
 type Sort = 'created-time' | 'updated-time' | 'last-bet-time' | 'last-comment-time'
@@ -14,5 +16,10 @@ export async function fetchMarkets(params: GetMarketsParams) {
     )
   )
   const response = await fetch(`${API_URL}/markets?${queryParams.toString()}`)
-  return response.json()
+  return response.json() as Promise<Market[]>
+}
+
+export async function fetchUser(username: string) {
+  const response = await fetch(`${API_URL}/user/${username}`)
+  return response.json() as Promise<User>
 }
