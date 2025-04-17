@@ -52,3 +52,37 @@ export type User = {
   lastBetTime?: number
   currentBettingStreak?: number
 }
+
+export type Bet = {
+  id: string
+  userId: string
+  contractId: string
+  createdTime: number
+
+  amount: number
+  orderAmount: number
+  shares: number
+
+  outcome: string
+  probBefore: number
+  probAfter: number
+
+  isFilled: boolean
+  isCancelled: boolean
+
+  limitProb?: number
+  loanAmount: number
+
+  fees: {
+    platformFee: number
+    liquidityFee: number
+    creatorFee: number
+  }
+
+  fills: Array<{
+    amount: number
+    shares: number
+    timestamp: number
+    matchedBetId: string | null
+  }>
+}
