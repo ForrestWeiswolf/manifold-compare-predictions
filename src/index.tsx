@@ -1,11 +1,12 @@
 import { render } from 'preact';
-import { useEffect, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import './style.css';
 import { fetchMarket, fetchBets } from './api';
-import { Bet } from './types';
+import { Bet, Market } from './types';
 
 export function App() {
 	const [usernames, setUsernames] = useState(['', ''] as [string, string])
+	const [commonMarkets, setCommonMarkets] = useState<Market[]>([])
 
 	const fetchCommonMarkets = async ([user1, user2]: [string, string]) => {
 		const bets = await Promise.all([fetchBets({ username: usernames[0] }), fetchBets({ username: usernames[1] })])
@@ -19,6 +20,8 @@ export function App() {
 				fetchMarket(id)
 			)
 		)
+
+		setCommonMarkets(commonMarkets.sort((a, b) => a.closeTime - b.closeTime))
 		console.log(commonMarketIds, commonMarkets)
 	}
 
@@ -37,6 +40,13 @@ export function App() {
 				}}
 			/>
 			<button onClick={() => fetchCommonMarkets(usernames)}>Fetch</button>
+			<div>
+				{commonMarkets.map((market) => (
+					<div key={market.id}>
+						<a href={market.url}>{market.question}{market.probability ? `: (${Math.round(market.probability * 100)}%)` : ''}</a>
+					</div>
+				))}
+			</div>
 		</div>
 	);
 }
