@@ -56,7 +56,7 @@ export function App() {
 			/>
 			<input type="text" name="username2" value={usernames[1]}
 				onChange={(e) => setUsernames([usernames[0], (e.target as HTMLInputElement).value])}
-				onKeyDown={(e) => {
+				onKeyUp={(e) => {
 					if (e.key === 'Enter') { fetchCommonMarkets(usernames) }
 				}}
 			/>
