@@ -41,7 +41,7 @@ export function App() {
 			(await commonMarkets)
 				.filter(m => !m.isResolved)
 				.map(m => ({ ...m, userProbs: userIds.map(id => getLastBetProb(commonBets, m, id)) }))
-				.sort((a, b) => a.closeTime - b.closeTime)
+				.sort((a, b) => (a.userProbs[0] - a.userProbs[1]) - (b.userProbs[0] - b.userProbs[1]))
 		)
 	}
 
