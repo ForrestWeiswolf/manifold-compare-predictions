@@ -21,7 +21,7 @@ export function App() {
 			)
 		)
 
-		setCommonMarkets(commonMarkets.sort((a, b) => a.closeTime - b.closeTime))
+		setCommonMarkets(commonMarkets.filter(m => !m.isResolved).sort((a, b) => a.closeTime - b.closeTime))
 		console.log(commonMarketIds, commonMarkets)
 	}
 
