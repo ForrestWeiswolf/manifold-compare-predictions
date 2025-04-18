@@ -27,7 +27,6 @@ body {
 	margin-bottom: 1rem;
 }
 
-
 @media (max-width: 639px) {
 	#app {
 		margin: 2rem;
@@ -48,6 +47,14 @@ body {
 .market a {
   text-decoration: none;
 	color: rgb(15 23 41);
+}
+
+p {
+	margin: 0;
+}
+
+footer {
+	margin-top: 1rem;
 }
 
 button {
