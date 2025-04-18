@@ -3,6 +3,8 @@ import { useState } from 'preact/hooks';
 import './style.css';
 import { fetchMarket, fetchBets } from './api';
 import { Bet, Market } from './types';
+import Footer from './Footer';
+import MarketRow from './MarketRow';
 
 const getLastBetProb = (bets: Bet[], market: Market, userId: string) => {
 	const bet = bets.sort((a, b) => b.createdTime - a.createdTime).find((b) => b.contractId === market.id && b.userId === userId);
@@ -11,7 +13,6 @@ const getLastBetProb = (bets: Bet[], market: Market, userId: string) => {
 	return bet.probAfter;
 };
 
-const formatProb = (prob: number) => `${Math.round(prob * 100)}%`;
 
 export function App() {
 	const [usernames, setUsernames] = useState(['', ''] as [string, string]);
@@ -68,30 +69,17 @@ export function App() {
 					{commonMarkets
 						.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
 						.map((market) => (
-							<div key={market.id} className="market">
-								<b><a href={market.url}>{market.question}{market.probability ? `: ${formatProb(market.probability)}` : ''}</a></b>
-								<div>
-									<span>{usernames[0]}: {market.userProbs[0] ? formatProb(market.userProbs[0]) : 'N/A'}</span>
-									<br />
-									<span>{usernames[1]}: {market.userProbs[1] ? formatProb(market.userProbs[1]) : 'N/A'}</span>
-								</div>
-							</div>
+							<MarketRow
+								key={market.id}
+								market={market}
+								usernames={usernames}
+								userProbs={market.userProbs}
+							/>
 						))}
 				</div>
 				}
 			</main>
-			<footer>
-				<details>
-					<summary>About</summary>
-					<p>This is a tool to compare the predictions of two users on Manifold Markets.</p>
-					<p>It shows markets on which both users have made bets, and the probability of each user's last bet on that market.</p>
-					<br />
-					<small>
-						<p>View the source code on <a href="https://github.com/ForrestWeiswolf/manifold-compare-predictions">GitHub</a>.</p>
-						<p>Created by Forrest Wolf (<a href='https://forrestweiswolf.github.io'>website</a>; <a href='https://github.com/ForrestWeiswolf'>GitHub</a>; <a href='https://manifold.markets/Forrest'>Manifold</a>).</p>
-					</small>
-				</details>
-			</footer>
+			<Footer />
 		</div>
 	);
 }
