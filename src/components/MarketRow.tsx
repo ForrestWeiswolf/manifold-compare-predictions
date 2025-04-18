@@ -1,5 +1,5 @@
-import { Market } from './types';
-import { formatProb } from './utils';
+import { Market } from '../types';
+import { formatProb } from '../utils';
 
 const MarketRow: preact.FunctionalComponent<{market: Market, usernames: string[], userProbs: number[]}> = ({market, usernames, userProbs}) => (
   <div key={market.id} className="market">
