@@ -82,7 +82,7 @@ export function App() {
 			<footer>
 				<details>
 					<summary>About</summary>
-					<p>This is a tool to compare the predictions of two users on Manifold.</p>
+					<p>This is a tool to compare the predictions of two users on Manifold Markets.</p>
 					<p>It shows markets on which both users have made bets, and the probability of each user's last bet on that market.</p>
 					<br />
 					<small>
