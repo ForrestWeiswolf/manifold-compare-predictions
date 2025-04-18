@@ -42,7 +42,7 @@ export function App() {
 			(await commonMarkets)
 				.filter(m => !m.isResolved && m.outcomeType === 'BINARY')
 				.map(m => ({ ...m, userProbs: userIds.map(id => getLastBetProb(commonBets, m, id)) }))
-				.sort((a, b) => (a.userProbs[0] - a.userProbs[1]) - (b.userProbs[0] - b.userProbs[1]))
+				.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
 		);
 		setLoading(false);
 	};
