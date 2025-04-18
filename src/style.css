@@ -27,28 +27,23 @@ body {
 	margin-bottom: 1rem;
 }
 
-@media (max-width: 639px) {
-	#app {
-		margin: 2rem;
-	}
-}
-
 .username-input-container {
 	display: flex;
 }
 
 .username-input-container input {
-	flex-grow: 1;
   padding: 0.5rem;
 }
 
-.brier-scores {
+.username-input-container div {
 	display: flex;
+	align-items: start;
+	flex-direction: column;
+
 }
 
-.brier-scores span {
-	flex-grow: 1;
-	text-align: left;
+.brier-score {
+	display: inline-block;
 }
 
 .market {
@@ -87,5 +82,22 @@ button {
 		.market a {
 			color: white;
 		}
+	}
+}
+
+@media (max-width: 639px) {
+	#app {
+		margin-top: 0.5rem;
+		margin-bottom: 0.5rem;
+	}
+	.username-input-container {
+		flex-direction: column;
+	}
+	.brier-score {
+		margin-left: 0.5rem;
+		flex-grow: 1;
+	}
+	.username-input-container div {
+		flex-direction: row;
 	}
 }
