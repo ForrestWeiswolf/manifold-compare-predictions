@@ -30,6 +30,7 @@ body {
 
 .username-input-container {
 	display: flex;
+	min-width: 50%;
 }
 
 .username-input-container input {
