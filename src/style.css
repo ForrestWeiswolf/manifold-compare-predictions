@@ -20,11 +20,12 @@ body {
 }
 
 #app {
-	max-width: 95%;
-	margin: 0 auto;
+	width: 100%;
 	text-align: center;
-	margin-top: 1rem;
-	margin-bottom: 1rem;
+	margin: 1rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .username-input-container {
@@ -39,7 +40,6 @@ body {
 	display: flex;
 	align-items: start;
 	flex-direction: column;
-
 }
 
 .brier-score {
@@ -87,8 +87,7 @@ button {
 
 @media (max-width: 639px) {
 	#app {
-		margin-top: 0.5rem;
-		margin-bottom: 0.5rem;
+		margin: 0.5rem;
 	}
 	.username-input-container {
 		flex-direction: column;
