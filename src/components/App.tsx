@@ -12,7 +12,6 @@ const getLastBetProb = (bets: Bet[], market: Market, userId: string) => {
 	return bet.probAfter;
 };
 
-
 export function App() {
 	const [usernames, setUsernames] = useState(['', ''] as [string, string]);
 	const [commonMarkets, setCommonMarkets] = useState<Array<Market & { userProbs: number[] }>>([]);
@@ -40,9 +39,10 @@ export function App() {
 
 		setCommonMarkets(
 			(await commonMarkets)
-				.filter(m => !m.isResolved && m.outcomeType === 'BINARY')
+				.filter(m => m.outcomeType === 'BINARY')
 				.map(m => ({ ...m, userProbs: userIds.map(id => getLastBetProb(commonBets, m, id)) }))
 		);
+
 		setLoading(false);
 	};
 
@@ -67,6 +67,7 @@ export function App() {
 				{loading ? <div>Loading...</div> : <div>
 					{commonMarkets
 						.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
+						.filter(m => !m.isResolved)
 						.map((market) => (
 							<MarketRow
 								key={market.id}
