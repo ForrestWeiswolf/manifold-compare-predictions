@@ -33,8 +33,22 @@ body {
 	}
 }
 
+.username-input-container {
+	display: flex;
+}
+
 .username-input-container input {
+	flex-grow: 1;
   padding: 0.5rem;
+}
+
+.brier-scores {
+	display: flex;
+}
+
+.brier-scores span {
+	flex-grow: 1;
+	text-align: left;
 }
 
 .market {

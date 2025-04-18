@@ -92,11 +92,10 @@ export function App() {
 					<div>
 						{commonBinaryMarkets.length === 0 && usernames[0] && usernames[1] && <div>No common markets found</div>}
 						{commonBinaryMarkets.length !== 0 && commonBets.length !== 0 && <>
-							<div>
-								<h2>Brier scores on common markets</h2>
-								<span>{usernames[0]}: {Math.round(brierScores[userIds[0]] * 100)/100}</span>
-								<br />
-								<span>{usernames[1]}: {Math.round(brierScores[userIds[1]] * 100)/100}</span>
+							<div className="brier-scores">
+								<span>Brier score: {Math.round(brierScores[userIds[0]] * 100) / 100}</span>
+								<span>Brier score: {Math.round(brierScores[userIds[1]] * 100) / 100}</span>
+								<span />
 							</div>
 							<h2>Common Markets</h2>
 							{
