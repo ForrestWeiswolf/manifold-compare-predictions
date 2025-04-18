@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import '../style.css';
 import { fetchMarket, fetchBets } from '../api';
 import { Bet, Market } from '../types';
@@ -12,15 +12,35 @@ const getLastBetProb = (bets: Bet[], market: Market, userId: string) => {
 	return bet.probAfter;
 };
 
+const getPredictionBrierScore = (bet: Bet, market: Market) => Math.pow(bet.probAfter - market.probability, 2);
+
+const getUserBrierScore = (bets: Bet[], markets: Market[], userId: string) => {
+	const userBets = bets.filter((b) => b.userId === userId && markets.some((m) => m.id === b.contractId));
+	return userBets.reduce(
+		(acc, bet) => acc + getPredictionBrierScore(bet, markets.find((m) => m.id === bet.contractId)), 0
+	) / userBets.length;
+};
+
 export function App() {
 	const [usernames, setUsernames] = useState(['', ''] as [string, string]);
-	const [commonMarkets, setCommonMarkets] = useState<Array<Market & { userProbs: number[] }>>([]);
+	const [commonBinaryMarkets, setCommonBinaryMarkets] = useState<Array<Market & { userProbs: number[] }>>([]);
+	const [commonBets, setCommonBets] = useState<Bet[]>([]);
+	const [userIds, setUserIds] = useState<string[]>([]);
+	const [brierScores, setBrierScores] = useState<{ [key: string]: number }>({});
 	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		if (commonBets.length !== 0 && commonBinaryMarkets.length !== 0) {
+			setBrierScores({
+				[userIds[0]]: getUserBrierScore(commonBets, commonBinaryMarkets, userIds[0]),
+				[userIds[1]]: getUserBrierScore(commonBets, commonBinaryMarkets, userIds[1])
+			});
+		}
+	}, [commonBets, commonBinaryMarkets, userIds]);
 
 	const fetchCommonMarkets = async () => {
 		setLoading(true);
 		const bets = await Promise.all([fetchBets({ username: usernames[0] }), fetchBets({ username: usernames[1] })]);
-		const userIds = [bets[0][0].userId, bets[1][0].userId];
 		const commonMarketIds = new Set<string>();
 		bets[0].forEach((bet) => {
 			if (bets[1].some((b) => b.contractId === bet.contractId)) { commonMarketIds.add(bet.contractId); }
@@ -32,15 +52,18 @@ export function App() {
 			)
 		);
 
-		const commonBets = [
+		const betsOnCommonMarkets = [
 			...bets[0].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId)),
 			...bets[1].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId))
 		];
 
-		setCommonMarkets(
+		setCommonBets(betsOnCommonMarkets);
+		setUserIds([bets[0][0].userId, bets[1][0].userId]);
+
+		setCommonBinaryMarkets(
 			(await commonMarkets)
 				.filter(m => m.outcomeType === 'BINARY')
-				.map(m => ({ ...m, userProbs: userIds.map(id => getLastBetProb(commonBets, m, id)) }))
+				.map(m => ({ ...m, userProbs: [bets[0][0].userId, bets[1][0].userId].map(id => getLastBetProb(betsOnCommonMarkets, m, id)) }))
 		);
 
 		setLoading(false);
@@ -64,19 +87,33 @@ export function App() {
 					/>
 					<button onClick={() => fetchCommonMarkets()}>Compare predictions</button>
 				</div>
-				{loading ? <div>Loading...</div> : <div>
-					{commonMarkets.length === 0 && usernames[0] && usernames[1] ? <div>No common markets found</div> : commonMarkets
-						.filter(m => !m.isResolved)
-						.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
-						.map((market) => (
-							<MarketRow
-								key={market.id}
-								market={market}
-								usernames={usernames}
-								userProbs={market.userProbs}
-							/>
-						))}
-				</div>
+				{loading ?
+					<div>Loading...</div> :
+					<div>
+						{commonBinaryMarkets.length === 0 && usernames[0] && usernames[1] && <div>No common markets found</div>}
+						{commonBinaryMarkets.length !== 0 && commonBets.length !== 0 && <>
+							<div>
+								<h2>Brier scores on common markets</h2>
+								<span>{usernames[0]}: {Math.round(brierScores[userIds[0]] * 100)/100}</span>
+								<br />
+								<span>{usernames[1]}: {Math.round(brierScores[userIds[1]] * 100)/100}</span>
+							</div>
+							<h2>Common Markets</h2>
+							{
+								commonBinaryMarkets
+									.filter(m => !m.isResolved)
+									.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
+									.map((market) => (
+										<MarketRow
+											key={market.id}
+											market={market}
+											usernames={usernames}
+											userProbs={market.userProbs}
+										/>
+									))
+							}
+						</>}
+					</div>
 				}
 			</main>
 			<Footer />
