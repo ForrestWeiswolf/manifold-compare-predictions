@@ -1,9 +1,9 @@
-import { Market, User, Bet } from './types';
+import { Market, Bet } from './types';
 
 const API_URL = 'https://api.manifold.markets/v0';
 
-const memoize = <T extends (...args: any[]) => Promise<any>>(fn: T) => {
-  const calls = new Map<string, Promise<any>>();
+const memoize = <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) => {
+  const calls = new Map<string, Promise<unknown>>();
   return async (...args: Parameters<T>) => {
     const key = JSON.stringify(args);
     if (!calls.has(key)) {
