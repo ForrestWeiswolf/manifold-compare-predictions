@@ -1,11 +1,11 @@
 :root {
-	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-	line-height: 1.5;
+  font-family: 'Figtree', 'Figtree Fallback', serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
 	font-weight: 400;
 
-	color: #222;
-	background-color: #ffffff;
-
+	background-color: white;
+	color: rgb(15 23 41);
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
@@ -21,7 +21,7 @@ body {
 }
 
 #app {
-	max-width: 1280px;
+	max-width: 95%;
 	margin: 0 auto;
 	text-align: center;
 }
@@ -69,14 +69,7 @@ section {
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		color: #ccc;
-		background-color: #1a1a1a;
-	}
-	.resource {
-		color: #ccc;
-		background-color: #161616;
-	}
-	.resource:hover {
-		border: 1px solid #bbb;
+		background-color: rgb(15 23 41);
+    color: white;
 	}
 }
