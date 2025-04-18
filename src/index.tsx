@@ -42,7 +42,6 @@ export function App() {
 			(await commonMarkets)
 				.filter(m => !m.isResolved && m.outcomeType === 'BINARY')
 				.map(m => ({ ...m, userProbs: userIds.map(id => getLastBetProb(commonBets, m, id)) }))
-				.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
 		);
 		setLoading(false);
 	};
@@ -66,16 +65,18 @@ export function App() {
 					<button onClick={() => fetchCommonMarkets()}>Compare predictions</button>
 				</div>
 				{loading ? <div>Loading...</div> : <div>
-					{commonMarkets.map((market) => (
-						<div key={market.id} className="market">
-							<b><a href={market.url}>{market.question}{market.probability ? `: ${formatProb(market.probability)}` : ''}</a></b>
-							<div>
-								<span>{usernames[0]}: {market.userProbs[0] ? formatProb(market.userProbs[0]) : 'N/A'}</span>
-								<br />
-								<span>{usernames[1]}: {market.userProbs[1] ? formatProb(market.userProbs[1]) : 'N/A'}</span>
+					{commonMarkets
+						.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
+						.map((market) => (
+							<div key={market.id} className="market">
+								<b><a href={market.url}>{market.question}{market.probability ? `: ${formatProb(market.probability)}` : ''}</a></b>
+								<div>
+									<span>{usernames[0]}: {market.userProbs[0] ? formatProb(market.userProbs[0]) : 'N/A'}</span>
+									<br />
+									<span>{usernames[1]}: {market.userProbs[1] ? formatProb(market.userProbs[1]) : 'N/A'}</span>
+								</div>
 							</div>
-						</div>
-					))}
+						))}
 				</div>
 				}
 			</main>
