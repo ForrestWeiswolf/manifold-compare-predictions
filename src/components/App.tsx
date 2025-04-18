@@ -66,8 +66,8 @@ export function App() {
 				</div>
 				{loading ? <div>Loading...</div> : <div>
 					{commonMarkets.length === 0 ? <div>No common markets found</div> : commonMarkets
-						.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
 						.filter(m => !m.isResolved)
+						.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
 						.map((market) => (
 							<MarketRow
 								key={market.id}
