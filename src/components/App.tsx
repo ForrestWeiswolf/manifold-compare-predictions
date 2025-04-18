@@ -65,7 +65,7 @@ export function App() {
 					<button onClick={() => fetchCommonMarkets()}>Compare predictions</button>
 				</div>
 				{loading ? <div>Loading...</div> : <div>
-					{commonMarkets
+					{commonMarkets.length === 0 ? <div>No common markets found</div> : commonMarkets
 						.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
 						.filter(m => !m.isResolved)
 						.map((market) => (
