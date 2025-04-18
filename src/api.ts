@@ -32,11 +32,6 @@ export const fetchMarket = memoize(async (id: string) => {
   return response.json() as Promise<Market>;
 });
 
-export const fetchUser = memoize(async (username: string) => {
-  const response = await fetch(`${API_URL}/user/${username}`);
-  return response.json() as Promise<User>;
-});
-
 export const fetchBets = memoize(async (params: GetBetsParams) => {
   const queryParams = paramsToString({ ...DEFAULT_BETS_PARAMS, ...params });
   const response = await fetch(`${API_URL}/bets?${queryParams}`);

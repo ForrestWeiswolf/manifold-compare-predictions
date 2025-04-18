@@ -26,33 +26,6 @@ export type Market = {
   lastBetTime: number
 }
 
-export type User = {
-  id: string
-  createdTime: number
-
-  name: string
-  username: string
-  url: string
-  avatarUrl?: string
-
-  bio?: string
-  bannerUrl?: string
-  website?: string
-  twitterHandle?: string
-  discordHandle?: string
-
-  isBot?: boolean
-  isAdmin?: boolean
-  isTrustworthy?: boolean
-  isBannedFromPosting?: boolean
-  userDeleted?: boolean
-
-  balance: number
-  totalDeposits: number
-  lastBetTime?: number
-  currentBettingStreak?: number
-}
-
 export type Bet = {
   id: string
   userId: string
