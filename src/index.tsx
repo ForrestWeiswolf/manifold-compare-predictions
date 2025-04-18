@@ -48,24 +48,26 @@ export function App() {
 	};
 
 	return (
-		<div>
-			<input type="text" name="username1" value={usernames[0]}
-				onChange={(e) => setUsernames([(e.target as HTMLInputElement).value, usernames[1]])}
-				onKeyDown={(e) => {
-					if (e.key === 'Enter') { fetchCommonMarkets(); }
-				}}
-			/>
-			<input type="text" name="username2" value={usernames[1]}
-				onChange={(e) => setUsernames([usernames[0], (e.target as HTMLInputElement).value])}
-				onKeyUp={(e) => {
-					if (e.key === 'Enter') { fetchCommonMarkets(); }
-				}}
-			/>
-			<button onClick={() => fetchCommonMarkets()}>Fetch</button>
+		<main>
+			<div className="username-input-container">
+				<input type="text" name="username1" value={usernames[0]}
+					onChange={(e) => setUsernames([(e.target as HTMLInputElement).value, usernames[1]])}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') { fetchCommonMarkets(); }
+					}}
+				/>
+				<input type="text" name="username2" value={usernames[1]}
+					onChange={(e) => setUsernames([usernames[0], (e.target as HTMLInputElement).value])}
+					onKeyUp={(e) => {
+						if (e.key === 'Enter') { fetchCommonMarkets(); }
+					}}
+				/>
+				<button onClick={() => fetchCommonMarkets()}>Compare predictions</button>
+			</div>
 			{loading ? <div>Loading...</div> : <div>
 				{commonMarkets.map((market) => (
-					<div key={market.id}>
-						<a href={market.url}>{market.question}{market.probability ? `: ${formatProb(market.probability)}` : ''}</a>
+					<div key={market.id} className="market">
+						<b><a href={market.url}>{market.question}{market.probability ? `: ${formatProb(market.probability)}` : ''}</a></b>
 						<div>
 							<span>{usernames[0]}: {market.userProbs[0] ? formatProb(market.userProbs[0]) : 'N/A'}</span>
 							<br />
@@ -75,7 +77,7 @@ export function App() {
 				))}
 			</div>
 			}
-		</div>
+		</main>
 	);
 }
 

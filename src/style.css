@@ -16,7 +16,6 @@
 body {
 	margin: 0;
 	display: flex;
-	align-items: center;
 	min-height: 100vh;
 }
 
@@ -24,52 +23,48 @@ body {
 	max-width: 95%;
 	margin: 0 auto;
 	text-align: center;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
 }
 
-img {
-	margin-bottom: 1.5rem;
-}
-
-img:hover {
-	filter: drop-shadow(0 0 2em #673ab8aa);
-}
-
-section {
-	margin-top: 5rem;
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	column-gap: 1.5rem;
-}
-
-.resource {
-	padding: 0.75rem 1.5rem;
-	border-radius: 0.5rem;
-	text-align: left;
-	text-decoration: none;
-	color: #222;
-	background-color: #f1f1f1;
-	border: 1px solid transparent;
-}
-
-.resource:hover {
-	border: 1px solid #000;
-	box-shadow: 0 25px 50px -12px #673ab888;
-}
 
 @media (max-width: 639px) {
 	#app {
 		margin: 2rem;
 	}
-	section {
-		margin-top: 5rem;
-		grid-template-columns: 1fr;
-		row-gap: 1rem;
-	}
+}
+
+.username-input-container input {
+  padding: 0.5rem;
+}
+
+.market {
+  padding: 0.5rem;
+}
+.market:hover {
+	background-color: rgb(224 231 255);
+}
+
+.market a {
+  text-decoration: none;
+	color: rgb(15 23 41);
+}
+
+button {
+  padding: 0.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
 		background-color: rgb(15 23 41);
     color: white;
+
+		.market:hover {
+			background-color: rgb(49 46 129);
+		}
+
+		.market a {
+			color: white;
+		}
 	}
 }
