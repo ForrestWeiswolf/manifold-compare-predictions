@@ -1,7 +1,7 @@
 This is a tool to compare the predictions of two users on Manifold.
 It shows markets on which both users have made bets, and the probability of each user's last bet on that market.
 
-Deployed here: https://manifold-points-of-discussion.vercel.app/
+Deployed here: https://manifold-compare-predictions.vercel.app/
 
 ## Getting Started
 
