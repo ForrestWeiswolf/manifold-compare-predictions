@@ -1,10 +1,7 @@
-# `create-preact`
+This is a tool to compare the predictions of two users on Manifold.
+It shows markets on which both users have made bets, and the probability of each user's last bet on that market.
 
-<h2 align="center">
-  <img height="256" width="256" src="./src/assets/preact.svg">
-</h2>
-
-<h3 align="center">Get started using Preact and Vite!</h3>
+Deployed here: https://manifold-points-of-discussion.vercel.app/
 
 ## Getting Started
 
