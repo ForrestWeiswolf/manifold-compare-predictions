@@ -69,6 +69,24 @@ export function App() {
 		setLoading(false);
 	};
 
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		if (usernames[0]) { params.set('username0', usernames[0]); }
+		if (usernames[1]) { params.set('username1', usernames[1]); }
+		if (params.size > 0) {
+			window.history.replaceState({}, '', `?${params.toString()}`);
+		}
+	}, [usernames]);
+
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		const username0 = params.get('username0');
+		const username1 = params.get('username1');
+		if (username0 && username1) {
+			setUsernames([username0, username1]);
+		}
+	}, []);
+
 	return (
 		<>
 			<section className="username-input-container">
@@ -97,6 +115,8 @@ export function App() {
 			</section>
 			<section>
 				{loading ?
+					// TODO: show progress
+					// TODO don't show "loading" or "no common markets found" if the user hasn't hit enter/clicked yet
 					<div>Loading...</div> :
 					<div>
 						{commonBinaryMarkets.length === 0 && usernames[0] && usernames[1] && <div>No common markets found</div>}
