@@ -104,7 +104,7 @@ export function App() {
 											key={market.id}
 											market={market}
 											usernames={usernames}
-											userProbs={market.lastBets.map(b => b.probAfter)}
+											lastBets={market.lastBets}
 										/>
 									))
 							}

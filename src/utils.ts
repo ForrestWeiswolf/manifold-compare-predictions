@@ -1,3 +1,7 @@
+import { Bet } from './types';
+
+export const formatBet = (bet: Bet) => `${bet.outcome} to ${formatProb(bet.probAfter)}`;
+
 export const formatProb = (prob: number) => `${Math.round(prob * 100)}%`;
 
 export const memoize = <T extends (...args: unknown[]) => ReturnType<T>>(fn: T) => {
