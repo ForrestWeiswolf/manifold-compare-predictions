@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useState, useCallback } from 'preact/hooks';
 import { Analytics } from '@vercel/analytics/react';
 import '../style.css';
 import { fetchMarket, fetchBets } from '../api';
@@ -39,7 +39,7 @@ export function App() {
 		}
 	}, [commonBets, commonBinaryMarkets, userIds]);
 
-	const fetchCommonMarkets = async () => {
+	const fetchCommonMarkets = useCallback(async () => {
 		setLoadingStatus('loading');
 		const bets = await Promise.all([fetchBets({ username: usernames[0] }), fetchBets({ username: usernames[1] })]);
 		const commonMarketIds = new Set<string>();
@@ -68,15 +68,21 @@ export function App() {
 		);
 
 		setLoadingStatus('ready');
-	};
+	}, [usernames]);
+
+	useEffect(() => {
+		if (usernames[0] && usernames[1]) {
+			fetchCommonMarkets();
+		}
+	}, [usernames, fetchCommonMarkets]);
 
 	return (
 		<>
 			<Analytics />
 			<UsernameInputs
+				enterUsernames={(usernames) => setUsernames(usernames)}
 				loadingStatus={loadingStatus}
 				brierScores={brierScores}
-				fetchCommonMarkets={fetchCommonMarkets}
 			/>
 			<section>
 				{/* // TODO: show progress */}
