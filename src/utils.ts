@@ -4,6 +4,8 @@ export const formatBet = (bet: Bet) => `${bet.outcome} to ${formatProb(bet.probA
 
 export const formatProb = (prob: number) => `${Math.round(prob * 100)}%`;
 
+export const formatTime = (time: number) => new Date(time).toLocaleDateString();
+
 export const memoize = <T extends (...args: unknown[]) => ReturnType<T>>(fn: T) => {
   const calls = new Map<string, ReturnType<T>>();
   return async (...args: Parameters<T>) => {
