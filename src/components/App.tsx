@@ -5,6 +5,7 @@ import { fetchMarket, fetchBets } from '../api';
 import { Bet, Market } from '../types';
 import Footer from './Footer';
 import MarketRow from './MarketRow';
+import UsernameInputs from './UsernameInputs';
 
 const getLastBetProb = (bets: Bet[], market: Market, userId: string) => {
 	const bet = bets.sort((a, b) => b.createdTime - a.createdTime).find((b) => b.contractId === market.id && b.userId === userId);
@@ -27,15 +28,14 @@ export function App() {
 	const [commonBinaryMarkets, setCommonBinaryMarkets] = useState<Array<Market & { userProbs: number[] }>>([]);
 	const [commonBets, setCommonBets] = useState<Bet[]>([]);
 	const [userIds, setUserIds] = useState<string[]>([]);
-	const [brierScores, setBrierScores] = useState<{ [key: string]: number }>({});
+	const [brierScores, setBrierScores] = useState<[number, number]>([null, null]);
 	const [loadingStatus, setLoadingStatus] = useState<'none' | 'loading' | 'ready'>('none');
 
 	useEffect(() => {
 		if (commonBets.length !== 0 && commonBinaryMarkets.length !== 0) {
-			setBrierScores({
-				[userIds[0]]: getUserBrierScore(commonBets, commonBinaryMarkets, userIds[0]),
-				[userIds[1]]: getUserBrierScore(commonBets, commonBinaryMarkets, userIds[1])
-			});
+			setBrierScores([getUserBrierScore(commonBets, commonBinaryMarkets, userIds[0]),
+			getUserBrierScore(commonBets, commonBinaryMarkets, userIds[1])]
+			);
 		}
 	}, [commonBets, commonBinaryMarkets, userIds]);
 
@@ -70,50 +70,14 @@ export function App() {
 		setLoadingStatus('ready');
 	};
 
-	useEffect(() => {
-		const params = new URLSearchParams(window.location.search);
-		if (usernames[0]) { params.set('username0', usernames[0]); }
-		if (usernames[1]) { params.set('username1', usernames[1]); }
-		if (params.size > 0) {
-			window.history.replaceState({}, '', `?${params.toString()}`);
-		}
-	}, [usernames]);
-
-	useEffect(() => {
-		const params = new URLSearchParams(window.location.search);
-		const username0 = params.get('username0');
-		const username1 = params.get('username1');
-		if (username0 && username1) {
-			setUsernames([username0, username1]);
-		}
-	}, []);
-
 	return (
 		<>
 			<Analytics />
-			<section className="username-input-container">
-				<div>
-					<input type="text" name="username1" value={usernames[0]}
-						onChange={(e) => setUsernames([(e.target as HTMLInputElement).value, usernames[1]])}
-						onKeyDown={(e) => {
-							if (e.key === 'Enter') { fetchCommonMarkets(); }
-						}}
-					/>
-					{loadingStatus === 'ready' && <span className="brier-score">Brier score: {Math.round(brierScores[userIds[0]] * 100) / 100}</span>}
-				</div>
-
-				<div>
-					<input type="text" name="username2" value={usernames[1]}
-						onChange={(e) => setUsernames([usernames[0], (e.target as HTMLInputElement).value])}
-						onKeyUp={(e) => {
-							if (e.key === 'Enter') { fetchCommonMarkets(); }
-						}}
-					/>
-					{loadingStatus === 'ready' && <span className="brier-score">Brier score: {Math.round(brierScores[userIds[1]] * 100) / 100}</span>}
-				</div>
-
-				<button onClick={() => fetchCommonMarkets()}>Compare predictions</button>
-			</section>
+			<UsernameInputs
+				loadingStatus={loadingStatus}
+				brierScores={brierScores}
+				fetchCommonMarkets={fetchCommonMarkets}
+			/>
 			<section>
 				{/* // TODO: show progress */}
 				{loadingStatus === 'loading' && <div>Loading...</div>}
