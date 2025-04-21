@@ -27,7 +27,7 @@ export function App() {
 	const [commonBets, setCommonBets] = useState<Bet[]>([]);
 	const [userIds, setUserIds] = useState<string[]>([]);
 	const [brierScores, setBrierScores] = useState<{ [key: string]: number }>({});
-	const [loading, setLoading] = useState(false);
+	const [loadingStatus, setLoadingStatus] = useState<'none' | 'loading' | 'ready'>('none');
 
 	useEffect(() => {
 		if (commonBets.length !== 0 && commonBinaryMarkets.length !== 0) {
@@ -39,7 +39,7 @@ export function App() {
 	}, [commonBets, commonBinaryMarkets, userIds]);
 
 	const fetchCommonMarkets = async () => {
-		setLoading(true);
+		setLoadingStatus('loading');
 		const bets = await Promise.all([fetchBets({ username: usernames[0] }), fetchBets({ username: usernames[1] })]);
 		const commonMarketIds = new Set<string>();
 		bets[0].forEach((bet) => {
@@ -66,7 +66,7 @@ export function App() {
 				.map(m => ({ ...m, userProbs: [bets[0][0].userId, bets[1][0].userId].map(id => getLastBetProb(betsOnCommonMarkets, m, id)) }))
 		);
 
-		setLoading(false);
+		setLoadingStatus('ready');
 	};
 
 	useEffect(() => {
@@ -114,10 +114,9 @@ export function App() {
 				<button onClick={() => fetchCommonMarkets()}>Compare predictions</button>
 			</section>
 			<section>
-				{loading ?
-					// TODO: show progress
-					// TODO don't show "loading" or "no common markets found" if the user hasn't hit enter/clicked yet
-					<div>Loading...</div> :
+				{/* // TODO: show progress */}
+				{loadingStatus === 'loading' && <div>Loading...</div>}
+				{loadingStatus === 'ready' && <>
 					<div>
 						{commonBinaryMarkets.length === 0 && usernames[0] && usernames[1] && <div>No common markets found</div>}
 						{commonBinaryMarkets.length !== 0 && commonBets.length !== 0 && <>
@@ -138,7 +137,7 @@ export function App() {
 						</>}
 
 					</div>
-				}
+				</>}
 			</section>
 			<Footer />
 		</>
