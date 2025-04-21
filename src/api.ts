@@ -17,13 +17,22 @@ const paramsToString = (params: Record<string, string | number | undefined>) => 
   ).toString();
 };
 
+const fetchWithErrorHandling = async (url: string) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
+  }
+  return response;
+};
+
 export const fetchMarket = memoize(async (id: string) => {
-  const response = await fetch(`${API_URL}/market/${id}`);
+  const response = await fetchWithErrorHandling(`${API_URL}/market/${id}`);
+
   return response.json() as Promise<Market>;
 });
 
 export const fetchBets = memoize(async (params: GetBetsParams) => {
   const queryParams = paramsToString({ ...DEFAULT_BETS_PARAMS, ...params });
-  const response = await fetch(`${API_URL}/bets?${queryParams}`);
+  const response = await fetchWithErrorHandling(`${API_URL}/bets?${queryParams}`);
   return response.json() as Promise<Bet[]>;
 });

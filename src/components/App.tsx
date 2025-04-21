@@ -29,7 +29,7 @@ export function App() {
 	const [commonBets, setCommonBets] = useState<Bet[]>([]);
 	const [userIds, setUserIds] = useState<string[]>([]);
 	const [brierScores, setBrierScores] = useState<[number, number]>([null, null]);
-	const [loadingStatus, setLoadingStatus] = useState<'none' | 'loading' | 'ready'>('none');
+	const [loadingStatus, setLoadingStatus] = useState<'none' | 'loading' | 'error' | 'ready'>('none');
 
 	useEffect(() => {
 		if (commonBets.length !== 0 && commonBinaryMarkets.length !== 0) {
@@ -61,16 +61,24 @@ export function App() {
 		setCommonBets(betsOnCommonMarkets);
 		setUserIds([bets[0][0].userId, bets[1][0].userId]);
 
-		setCommonBinaryMarkets(
-			(await commonMarkets)
-				.filter(m => m.outcomeType === 'BINARY')
-				.map(m => ({ ...m, lastBets: [
-					getLastBet(betsOnCommonMarkets, m, bets[0][0].userId),
-					getLastBet(betsOnCommonMarkets, m, bets[1][0].userId)
-				] }))
-		);
+		try {
+			setCommonBinaryMarkets(
+				(await commonMarkets)
+					.filter(m => m.outcomeType === 'BINARY')
+					.map(m => ({
+						...m, lastBets: [
+							getLastBet(betsOnCommonMarkets, m, bets[0][0].userId),
+							getLastBet(betsOnCommonMarkets, m, bets[1][0].userId)
+						]
+					}))
+			);
+			setLoadingStatus('ready');
+		} catch (error) {
+			console.log('caught error', error);
+			console.error(error);
+			setLoadingStatus('error');
+		}
 
-		setLoadingStatus('ready');
 	}, [usernames]);
 
 	useEffect(() => {
@@ -89,6 +97,7 @@ export function App() {
 			/>
 			<section>
 				{/* // TODO: show loading progress? */}
+				{loadingStatus === 'error' && <div>Problem loading data</div>}
 				{loadingStatus === 'loading' && <div>Loading...</div>}
 				{loadingStatus === 'ready' && <>
 					<div>
