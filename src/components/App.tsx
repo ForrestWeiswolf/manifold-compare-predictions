@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
+import { Analytics } from '@vercel/analytics/react';
 import '../style.css';
 import { fetchMarket, fetchBets } from '../api';
 import { Bet, Market } from '../types';
@@ -89,6 +90,7 @@ export function App() {
 
 	return (
 		<>
+			<Analytics />
 			<section className="username-input-container">
 				<div>
 					<input type="text" name="username1" value={usernames[0]}
