@@ -7,11 +7,11 @@ import Footer from './Footer';
 import MarketRow from './MarketRow';
 import UsernameInputs from './UsernameInputs';
 
-const getLastBetProb = (bets: Bet[], market: Market, userId: string) => {
+const getLastBet = (bets: Bet[], market: Market, userId: string) => {
 	const bet = bets.sort((a, b) => b.createdTime - a.createdTime).find((b) => b.contractId === market.id && b.userId === userId);
 	if (!bet) { return null; }
 
-	return bet.probAfter;
+	return bet;
 };
 
 const getPredictionBrierScore = (bet: Bet, market: Market) => Math.pow(bet.probAfter - market.probability, 2);
@@ -25,7 +25,7 @@ const getUserBrierScore = (bets: Bet[], markets: Market[], userId: string) => {
 
 export function App() {
 	const [usernames, setUsernames] = useState(['', ''] as [string, string]);
-	const [commonBinaryMarkets, setCommonBinaryMarkets] = useState<Array<Market & { userProbs: number[] }>>([]);
+	const [commonBinaryMarkets, setCommonBinaryMarkets] = useState<Array<Market & { lastBets: [Bet, Bet] }>>([]);
 	const [commonBets, setCommonBets] = useState<Bet[]>([]);
 	const [userIds, setUserIds] = useState<string[]>([]);
 	const [brierScores, setBrierScores] = useState<[number, number]>([null, null]);
@@ -64,7 +64,10 @@ export function App() {
 		setCommonBinaryMarkets(
 			(await commonMarkets)
 				.filter(m => m.outcomeType === 'BINARY')
-				.map(m => ({ ...m, userProbs: [bets[0][0].userId, bets[1][0].userId].map(id => getLastBetProb(betsOnCommonMarkets, m, id)) }))
+				.map(m => ({ ...m, lastBets: [
+					getLastBet(betsOnCommonMarkets, m, bets[0][0].userId),
+					getLastBet(betsOnCommonMarkets, m, bets[1][0].userId)
+				] }))
 		);
 
 		setLoadingStatus('ready');
@@ -85,7 +88,7 @@ export function App() {
 				brierScores={brierScores}
 			/>
 			<section>
-				{/* // TODO: show progress */}
+				{/* // TODO: show loading progress? */}
 				{loadingStatus === 'loading' && <div>Loading...</div>}
 				{loadingStatus === 'ready' && <>
 					<div>
@@ -95,13 +98,13 @@ export function App() {
 							{
 								commonBinaryMarkets
 									.filter(m => !m.isResolved)
-									.sort((a, b) => Math.abs(b.userProbs[0] - b.userProbs[1]) - Math.abs(a.userProbs[0] - a.userProbs[1]))
+									.sort((a, b) => Math.abs(b.lastBets[0].probAfter - b.lastBets[1].probAfter) - Math.abs(a.lastBets[0].probAfter - a.lastBets[1].probAfter))
 									.map((market) => (
 										<MarketRow
 											key={market.id}
 											market={market}
 											usernames={usernames}
-											userProbs={market.userProbs}
+											userProbs={market.lastBets.map(b => b.probAfter)}
 										/>
 									))
 							}
