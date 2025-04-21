@@ -99,18 +99,17 @@ export function App() {
 							if (e.key === 'Enter') { fetchCommonMarkets(); }
 						}}
 					/>
-					{commonBinaryMarkets.length !== 0 && commonBets.length !== 0 && <span className="brier-score">Brier score: {Math.round(brierScores[userIds[0]] * 100) / 100}</span>}
+					{loadingStatus === 'ready' && <span className="brier-score">Brier score: {Math.round(brierScores[userIds[0]] * 100) / 100}</span>}
 				</div>
 
 				<div>
-
 					<input type="text" name="username2" value={usernames[1]}
 						onChange={(e) => setUsernames([usernames[0], (e.target as HTMLInputElement).value])}
 						onKeyUp={(e) => {
 							if (e.key === 'Enter') { fetchCommonMarkets(); }
 						}}
 					/>
-					{commonBinaryMarkets.length !== 0 && commonBets.length !== 0 && <span className="brier-score">Brier score: {Math.round(brierScores[userIds[1]] * 100) / 100}</span>}
+					{loadingStatus === 'ready' && <span className="brier-score">Brier score: {Math.round(brierScores[userIds[1]] * 100) / 100}</span>}
 				</div>
 
 				<button onClick={() => fetchCommonMarkets()}>Compare predictions</button>
