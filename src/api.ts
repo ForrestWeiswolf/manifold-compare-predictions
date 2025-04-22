@@ -31,8 +31,18 @@ export const fetchMarket = memoize(async (id: string) => {
   return response.json() as Promise<Market>;
 });
 
-export const fetchMarkets = (marketIds: string[]) => {
-  return Promise.all(marketIds.map(fetchMarket));
+export const fetchMarkets = async (marketIds: string[]) => {
+  const batchSize = 10;
+  const batches = [];
+  const markets = [];
+  for (let i = 0; i < marketIds.length; i += batchSize) {
+    batches.push(marketIds.slice(i, i + batchSize));
+  }
+  for (const batch of batches) {
+    console.log(`Fetching batch ${batch.join(', ')}`);
+    markets.push(...(await Promise.all(batch.map(fetchMarket))));
+  }
+  return markets;
 };
 
 export const fetchBets = memoize(async (params: GetBetsParams) => {
