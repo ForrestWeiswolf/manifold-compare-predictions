@@ -41,6 +41,7 @@ export const fetchMarkets = async (marketIds: string[]) => {
 
   for (const batch of batches) {
     markets.push(...(await Promise.all(batch.map(fetchMarket))));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
   return markets;
 };
