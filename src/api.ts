@@ -31,6 +31,10 @@ export const fetchMarket = memoize(async (id: string) => {
   return response.json() as Promise<Market>;
 });
 
+export const fetchMarkets = (marketIds: string[]) => {
+  return Promise.all(marketIds.map(fetchMarket));
+};
+
 export const fetchBets = memoize(async (params: GetBetsParams) => {
   const queryParams = paramsToString({ ...DEFAULT_BETS_PARAMS, ...params });
   const response = await fetchWithErrorHandling(`${API_URL}/bets?${queryParams}`);

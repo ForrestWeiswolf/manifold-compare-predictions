@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'preact/hooks';
 import { Analytics } from '@vercel/analytics/react';
 import '../style.css';
-import { fetchMarket, fetchBets } from '../api';
+import { fetchMarkets, fetchBets } from '../api';
 import { Bet, Market } from '../types';
 import Footer from './Footer';
 import MarketRow from './MarketRow';
@@ -47,11 +47,7 @@ export function App() {
 			if (bets[1].some((b) => b.contractId === bet.contractId)) { commonMarketIds.add(bet.contractId); }
 		});
 
-		const commonMarkets = Promise.all(
-			Array.from(commonMarketIds).map((id) =>
-				fetchMarket(id)
-			)
-		);
+		const commonMarkets = fetchMarkets(Array.from(commonMarketIds));
 
 		const betsOnCommonMarkets = [
 			...bets[0].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId)),
