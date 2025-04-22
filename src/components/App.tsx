@@ -50,18 +50,18 @@ export function App() {
 			if (bets[1].some((b) => b.contractId === bet.contractId)) { commonMarketIds.add(bet.contractId); }
 		});
 
-		const commonMarkets = (await fetchMarkets(Array.from(commonMarketIds), setLoadingProgress))
-			.filter((m) => !m.isCancelled && (m.isFilled || !m.limitProb));
-
-		const betsOnCommonMarkets = [
-			...bets[0].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId)),
-			...bets[1].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId))
-		];
-
-		setCommonBets(betsOnCommonMarkets);
-		setUserIds([bets[0][0].userId, bets[1][0].userId]);
-
 		try {
+			const commonMarkets = (await fetchMarkets(Array.from(commonMarketIds), setLoadingProgress))
+				.filter((m) => !m.isCancelled && (m.isFilled || !m.limitProb));
+
+			const betsOnCommonMarkets = [
+				...bets[0].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId)),
+				...bets[1].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId))
+			];
+
+			setCommonBets(betsOnCommonMarkets);
+			setUserIds([bets[0][0].userId, bets[1][0].userId]);
+
 			setCommonBinaryMarkets(
 				(await commonMarkets)
 					.filter(m => m.outcomeType === 'BINARY')
