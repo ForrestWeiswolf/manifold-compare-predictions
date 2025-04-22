@@ -30,6 +30,7 @@ export function App() {
 	const [userIds, setUserIds] = useState<string[]>([]);
 	const [brierScores, setBrierScores] = useState<[number, number]>([null, null]);
 	const [loadingStatus, setLoadingStatus] = useState<'none' | 'loading' | 'error' | 'ready'>('none');
+	const [loadingProgress, setLoadingProgress] = useState<{ total: number, loaded: number }>({ total: 0, loaded: 0 });
 
 	useEffect(() => {
 		if (commonBets.length !== 0 && commonBinaryMarkets.length !== 0) {
@@ -43,11 +44,13 @@ export function App() {
 		setLoadingStatus('loading');
 		const bets = await Promise.all([fetchBets({ username: usernames[0] }), fetchBets({ username: usernames[1] })]);
 		const commonMarketIds = new Set<string>();
+		setLoadingProgress({ total: commonMarketIds.size, loaded: 0 });
+
 		bets[0].forEach((bet) => {
 			if (bets[1].some((b) => b.contractId === bet.contractId)) { commonMarketIds.add(bet.contractId); }
 		});
 
-		const commonMarkets = (await fetchMarkets(Array.from(commonMarketIds)))
+		const commonMarkets = (await fetchMarkets(Array.from(commonMarketIds), setLoadingProgress))
 			.filter((m) => !m.isCancelled && (m.isFilled || !m.limitProb));
 
 		const betsOnCommonMarkets = [
@@ -93,32 +96,38 @@ export function App() {
 				brierScores={brierScores}
 			/>
 			<section>
-				{/* // TODO: show loading progress? */}
 				{loadingStatus === 'error' && <div>Problem loading data</div>}
-				{loadingStatus === 'loading' && <div>Loading...</div>}
-				{loadingStatus === 'ready' && <>
-					<div>
-						{commonBinaryMarkets.length === 0 && usernames[0] && usernames[1] && <div>No common markets found</div>}
-						{commonBinaryMarkets.length !== 0 && commonBets.length !== 0 && <>
-							<h2>Common Markets</h2>
-							{
-								commonBinaryMarkets
-									.filter(m => !m.isResolved)
-									.sort((a, b) => Math.abs(b.lastBets[0].probAfter - b.lastBets[1].probAfter) - Math.abs(a.lastBets[0].probAfter - a.lastBets[1].probAfter))
-									.map((market) => (
-										<MarketRow
-											key={market.id}
-											market={market}
-											usernames={usernames}
-											lastBets={market.lastBets}
-										/>
-									))
-							}
-						</>}
+				{loadingStatus === 'loading' && <div>
+					Loading...
+					{loadingProgress.total !== 0 && <div>
+						{loadingProgress.loaded} / {loadingProgress.total} markets loaded
+					</div>}
+				</div>}
+				{
+					loadingStatus === 'ready' && <>
+						<div>
+							{commonBinaryMarkets.length === 0 && usernames[0] && usernames[1] && <div>No common markets found</div>}
+							{commonBinaryMarkets.length !== 0 && commonBets.length !== 0 && <>
+								<h2>Common Markets</h2>
+								{
+									commonBinaryMarkets
+										.filter(m => !m.isResolved)
+										.sort((a, b) => Math.abs(b.lastBets[0].probAfter - b.lastBets[1].probAfter) - Math.abs(a.lastBets[0].probAfter - a.lastBets[1].probAfter))
+										.map((market) => (
+											<MarketRow
+												key={market.id}
+												market={market}
+												usernames={usernames}
+												lastBets={market.lastBets}
+											/>
+										))
+								}
+							</>}
 
-					</div>
-				</>}
-			</section>
+						</div>
+					</>
+				}
+			</section >
 			<Footer />
 		</>
 	);

@@ -31,7 +31,7 @@ export const fetchMarket = memoize(async (id: string) => {
   return response.json() as Promise<Market>;
 });
 
-export const fetchMarkets = async (marketIds: string[]) => {
+export const fetchMarkets = async (marketIds: string[], setLoadingProgress: (progress: { total: number, loaded: number }) => void) => {
   const batchSize = 10;
   const batches = [];
   const markets = [];
@@ -41,6 +41,7 @@ export const fetchMarkets = async (marketIds: string[]) => {
 
   for (const batch of batches) {
     markets.push(...(await Promise.all(batch.map(fetchMarket))));
+    setLoadingProgress({ total: marketIds.length, loaded: markets.length });
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   return markets;
