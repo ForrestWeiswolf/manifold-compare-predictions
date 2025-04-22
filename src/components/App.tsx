@@ -47,7 +47,8 @@ export function App() {
 			if (bets[1].some((b) => b.contractId === bet.contractId)) { commonMarketIds.add(bet.contractId); }
 		});
 
-		const commonMarkets = (await fetchMarkets(Array.from(commonMarketIds))).filter((m) => !m.isCancelled);
+		const commonMarkets = (await fetchMarkets(Array.from(commonMarketIds)))
+			.filter((m) => !m.isCancelled && (m.isFilled || !m.limitProb));
 
 		const betsOnCommonMarkets = [
 			...bets[0].sort((a, b) => a.createdTime - b.createdTime).filter((bet) => commonMarketIds.has(bet.contractId)),

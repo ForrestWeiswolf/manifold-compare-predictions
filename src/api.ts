@@ -38,8 +38,8 @@ export const fetchMarkets = async (marketIds: string[]) => {
   for (let i = 0; i < marketIds.length; i += batchSize) {
     batches.push(marketIds.slice(i, i + batchSize));
   }
+
   for (const batch of batches) {
-    console.log(`Fetching batch ${batch.join(', ')}`);
     markets.push(...(await Promise.all(batch.map(fetchMarket))));
   }
   return markets;
