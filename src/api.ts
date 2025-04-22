@@ -32,7 +32,7 @@ export const fetchMarket = memoize(async (id: string) => {
 });
 
 export const fetchMarkets = async (marketIds: string[], setLoadingProgress: (progress: { total: number, loaded: number }) => void) => {
-  const batchSize = 10;
+  const batchSize = 4;
   const batches = [];
   const markets = [];
   for (let i = 0; i < marketIds.length; i += batchSize) {
@@ -42,7 +42,7 @@ export const fetchMarkets = async (marketIds: string[], setLoadingProgress: (pro
   for (const batch of batches) {
     markets.push(...(await Promise.all(batch.map(fetchMarket))));
     setLoadingProgress({ total: marketIds.length, loaded: markets.length });
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 50));
   }
   return markets;
 };
